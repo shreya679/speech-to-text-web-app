@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    
+</head>
+<body>
+    <div class="container">
+        <h1 class="title"> Speech to Text</h1>
+        <div class="buttons">
+            <button id="startButton"> Start Listening </button>
+            <button id="stopButton" disabled> Stop Listening </button>
+        </div>
+        <div id="output" class="outputText"></div>
+    </div>
+
+
+    <script>
+        const startButton = document.getElementById('startButton')
+        const stopButton = document.getElementById('stopButton');
+        const outputDiv = document.getElementById('output');
+        const recognition = new webkitSpeechRecognition() || new SpeechRecognition();
+
+        recognition.interimResults = true;
+        recognition.continuous = true;
+
+        startButton.addEventListener('click', () => {
+            recognition.start();
+            startButton.disabled = true;
+            stopButton.disabled = false;
+            startButton.textContent = 'Recording...';
+        });
+
+        stopButton.addEventListener('click', () => {
+            recognition.stop();
+            stopButton.disabled = true;
+            startButton.disabled = false; 
+            startButton.textContent = 'Start Recording';
+        });
+
+        recognition.onresult = event => {
+            const result = event.results[event.results.length - 1][0].transcript;
+            outputDiv.textContent = result;
+        };
+        
+        recognition.onend = () => {
+            stopButton.disabled = true;
+            startButton.disabled = false;
+            startButton.textContent = 'Start Recording';
+        };
+        
+        recognition.onerror = event => {
+            console.error('Speech recognition error:', event.error);
+        };
+        
+        recognition.onnomatch = () => {
+            console.log('No speech was recognized.');
+        };
+    </script>
+
+</body>
+</html>
